@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Chat con Reacciones ❤️</title>
+<title>NachoChat</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   /* Burbuja con posicion relativa para el corazon */
@@ -51,7 +51,7 @@ app.get('/', (req, res) => {
   <div class="flex flex-col w-full h-screen sm:h-[90vh] sm:max-w-lg bg-gray-800 rounded-none sm:rounded-xl shadow-lg overflow-hidden">
 
     <header class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 p-4 text-center font-bold text-lg border-b border-gray-700">
-      💬 Chat con Reacciones ❤️
+      💬 NachoChat
     </header>
 
     <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-800"></div>
