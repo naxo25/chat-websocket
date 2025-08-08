@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat en tiempo real</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 16px; }
+    .card { border: 1px solid #8884; border-radius: 12px; padding: 12px; }
+    #chat { height: 60vh; overflow:auto; border: 1px solid #8884; border-radius: 10px; padding: 8px; background:#0001; }
+    .row { display:flex; gap:8px; margin-top:8px; }
+    input, button { padding:10px; border-radius:10px; border:1px solid #8884; }
+    .me { text-align: right; opacity: .9; }
+    .sys { opacity: .6; font-style: italic; }
+    .meta { font-size: .8em; opacity:.7; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Chat en tiempo real <small class="meta">(sin BD)</small></h1>
+  <div class="card">
+    <div id="chat" aria-live="polite"></div>
+    <div class="row">
+      <input id="name" placeholder="Tu nombre" />
+      <input id="msg" placeholder="Escribe y pulsa Enter…" />
+      <button id="send">Enviar</button>
+    </div>
+    <p class="meta">Estado: <span id="state">desconectado</span></p>
+  </div>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const chat = $('chat');
+  const state = $('state');
+
+  function addMsg(text, cls=''){
+    const d = document.createElement('div');
+    d.textContent = text; d.className = cls; chat.appendChild(d); chat.scrollTop = chat.scrollHeight;
+  }
+
+  // Conectar automáticamente
+  const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+  const ws = new WebSocket(`${protocol}://${location.host}`);
+
+  ws.addEventListener('open', () => { state.textContent = 'conectado'; addMsg('✅ Conectado', 'sys'); });
+  ws.addEventListener('close', () => { state.textContent = 'desconectado'; addMsg('❌ Desconectado', 'sys'); });
+  ws.addEventListener('message', (e) => {
+    try {
+      const { name, text, ts } = JSON.parse(e.data);
+      const time = new Date(ts).toLocaleTimeString();
+      addMsg(`[${time}] ${name}: ${text}`);
+    } catch { addMsg(String(e.data)); }
+  });
+
+  function send(){
+    if (ws.readyState !== 1) return;
+    const name = $('name').value.trim() || 'Anon';
+    const text = $('msg').value.trim();
+    if (!text) return;
+    const payload = { name, text, ts: Date.now() };
+    ws.send(JSON.stringify(payload));
+    addMsg(`[ahora] Yo: ${text}`, 'me');
+    $('msg').value=''; $('msg').focus();
+  }
+
+  $('send').onclick = send;
+  $('msg').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); send(); }});
+</script>
+</body>
+</html>

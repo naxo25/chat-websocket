@@ -1,0 +1,19 @@
+{
+  "name": "socket",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "http": "0.0.1-security",
+    "os": "^0.1.2",
+    "ws": "^8.18.3"
+  }
+}
